@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Study Timer</title>
+<meta name="description" content="A focus timer with task priorities, a dashboard of your study time and a study calendar.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="var(--accent)" stroke-width="2.5"/><path d="M14 7v7l4.5 3" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Study Timer</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" id="tab-timer" aria-controls="panel-timer" aria-selected="true">Timer</button>
+      <button type="button" role="tab" id="tab-dashboard" aria-controls="panel-dashboard" aria-selected="false" tabindex="-1">Dashboard</button>
+    </nav>
+  </header>
+
+  <div id="demoBar" class="demo" hidden>
+    <span>Showing sample data. It isn't saved and doesn't touch your real sessions.</span>
+    <button type="button" class="btn small" id="demoOff">Hide sample data</button>
+  </div>
+
+  <main>
+    <!-- TIMER -->
+    <section id="panel-timer" role="tabpanel" aria-labelledby="tab-timer">
+      <div class="timer-grid">
+        <div class="main-col">
+        <div class="card dial-card">
+          <div class="modes" role="group" aria-label="Session type">
+            <button type="button" class="seg" data-mode="focus" aria-pressed="true">Focus</button>
+            <button type="button" class="seg" data-mode="short" aria-pressed="false">Short break</button>
+            <button type="button" class="seg" data-mode="long" aria-pressed="false">Long break</button>
+          </div>
+          <div class="dial" id="dial" data-mode="focus">
+            <svg id="dialSvg" viewBox="0 0 320 320" aria-hidden="true"></svg>
+            <div class="dial-center">
+              <div class="dial-label" id="dialLabel">Focus</div>
+              <div class="dial-time" id="dialTime" role="timer">25:00</div>
+              <div class="dial-sub" id="dialSub"></div>
+              <div class="pips" id="pips" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="controls">
+            <button type="button" class="btn primary" id="btnMain">Start</button>
+            <button type="button" class="btn" id="btnReset">Reset</button>
+            <button type="button" class="btn" id="btnFinish" hidden>Finish and log</button>
+            <button type="button" class="btn" id="btnSkip" hidden>Skip break</button>
+          </div>
+          <p class="notice" id="notice" role="status" aria-live="polite"></p>
+        </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Tasks</h2><span class="muted" id="taskCount"></span></div>
+        <p class="muted">The task at the top is your highest priority. Use the arrows to move a task up or down.</p>
+        <form class="task-form" id="taskForm" autocomplete="off">
+          <label class="vh" for="taskInput">New task</label>
+          <input type="text" id="taskInput" maxlength="80" placeholder="Add a task, e.g. Finish problem set 4" required>
+          <label class="vh" for="taskSubject">Subject</label>
+          <select id="taskSubject"></select>
+          <button type="submit" class="btn primary small">Add task</button>
+        </form>
+        <ul class="list" id="taskList"></ul>
+        <details class="done-box" id="doneBox" hidden>
+          <summary id="doneSum"></summary>
+          <ul class="list" id="doneList"></ul>
+          <button type="button" class="btn small" id="clearDone">Clear completed</button>
+        </details>
+      </div>
+        </div>
+
+        <div class="side">
+          <div class="card">
+            <h2>Subject</h2>
+            <div class="chips" id="chips"></div>
+            <form class="inline" id="subjForm" autocomplete="off">
+              <label class="vh" for="subjInput">New subject</label>
+              <input type="text" id="subjInput" maxlength="24" placeholder="Add a subject">
+              <button type="submit" class="btn small">Add</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="sum-line"><h2>Today</h2><span class="num" id="todayTotal"></span></div>
+            <ul class="list" id="todayList"></ul>
+          </div>
+
+          <div class="card" id="planCard" hidden>
+            <h2>Planned for today</h2>
+            <ul class="list" id="planToday"></ul>
+          </div>
+
+          <details class="card settings">
+            <summary>Settings</summary>
+            <div class="fields">
+              <label for="setFocus">Focus (min)<input type="number" id="setFocus" inputmode="numeric" min="1" max="180"></label>
+              <label for="setShort">Short break (min)<input type="number" id="setShort" inputmode="numeric" min="1" max="60"></label>
+              <label for="setLong">Long break (min)<input type="number" id="setLong" inputmode="numeric" min="1" max="90"></label>
+              <label for="setCycles">Sessions before long break<input type="number" id="setCycles" inputmode="numeric" min="2" max="8"></label>
+              <label for="setGoal">Daily goal (min)<input type="number" id="setGoal" inputmode="numeric" min="10" max="720"></label>
+              <span></span>
+              <label class="check" for="setAuto"><input type="checkbox" id="setAuto"> Start the next session automatically</label>
+              <label class="check" for="setSound"><input type="checkbox" id="setSound"> Play a chime when a session ends</label>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+      <div style="display:grid;gap:16px">
+        <div class="stats" id="stats"></div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Study time per day</h2>
+            <div class="seg-group" id="rangeSeg" role="group" aria-label="Date range">
+              <button type="button" class="seg" data-range="7" aria-pressed="false">7 days</button>
+              <button type="button" class="seg" data-range="14" aria-pressed="true">14 days</button>
+              <button type="button" class="seg" data-range="30" aria-pressed="false">30 days</button>
+            </div>
+          </div>
+          <div class="readout" id="readout"></div>
+          <div class="chart" id="chart"></div>
+          <div class="legend" id="legend"></div>
+          <div class="empty" id="emptyNote" hidden>
+            <span>No sessions yet. Finish a focus session and it shows up here.</span>
+            <button type="button" class="btn small" id="demoOn">Preview with sample data</button>
+          </div>
+        </div>
+
+      <div class="cal-layout">
+        <div class="card">
+          <div class="cal-head">
+            <h2 id="calTitle"></h2>
+            <button type="button" class="btn small" id="calToday">Today</button>
+            <button type="button" class="btn small" id="calPrev" aria-label="Previous month">&#8249;</button>
+            <button type="button" class="btn small" id="calNext" aria-label="Next month">&#8250;</button>
+          </div>
+          <p class="cal-sub" id="calSummary"></p>
+          <div class="dow" aria-hidden="true">
+            <span><span class="l">Sun</span><span class="s">S</span></span>
+            <span><span class="l">Mon</span><span class="s">M</span></span>
+            <span><span class="l">Tue</span><span class="s">T</span></span>
+            <span><span class="l">Wed</span><span class="s">W</span></span>
+            <span><span class="l">Thu</span><span class="s">T</span></span>
+            <span><span class="l">Fri</span><span class="s">F</span></span>
+            <span><span class="l">Sat</span><span class="s">S</span></span>
+          </div>
+          <div class="days" id="calDays"></div>
+          <div class="cal-legend">
+            <span>Shade shows time studied against your goal</span>
+            <span class="sw" aria-hidden="true"><i style="--i:0"></i><i style="--i:.25"></i><i style="--i:.5"></i><i style="--i:.75"></i><i style="--i:1"></i></span>
+            <span>Circles are planned sessions; filled means done</span>
+          </div>
+        </div>
+
+        <div class="card day-panel">
+          <div>
+            <h2 id="dpTitle"></h2>
+            <p class="muted" id="dpSub"></p>
+          </div>
+          <div class="sec"><h3>Sessions</h3><ul class="list" id="dpSessions"></ul></div>
+          <div class="sec"><h3>Plans</h3><ul class="list" id="dpPlans"></ul></div>
+          <form class="plan-form" id="planForm" autocomplete="off">
+            <label class="vh" for="planTitle">Plan</label>
+            <input type="text" id="planTitle" class="full" maxlength="80" placeholder="Plan a session, e.g. Chapter 6 problems" required>
+            <label class="vh" for="planSubject">Subject</label>
+            <select id="planSubject"></select>
+            <label class="vh" for="planTime">Time</label>
+            <input type="time" id="planTime">
+            <button type="submit" class="btn primary small">Add plan</button>
+          </form>
+        </div>
+      </div>
+
+        <div class="two">
+          <div class="card">
+            <div class="card-head"><h2>By subject</h2><span class="muted" id="subjRange"></span></div>
+            <div id="subjects"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Recent sessions</h2></div>
+            <ul class="list" id="recent"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot"><span id="sync" role="status">Loading your sessions…</span></footer>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
