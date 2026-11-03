@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Study Timer</title>
+<meta name="description" content="A focus timer with task priorities, a dashboard of your study time and a study calendar.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 28 28" aria-hidden="true">
+        <g fill="#FFC2D8" stroke="#D63A74" stroke-width="1.2">
+          <ellipse cx="14" cy="7.5" rx="4.2" ry="6"/>
+          <ellipse cx="14" cy="7.5" rx="4.2" ry="6" transform="rotate(72 14 14)"/>
+          <ellipse cx="14" cy="7.5" rx="4.2" ry="6" transform="rotate(144 14 14)"/>
+          <ellipse cx="14" cy="7.5" rx="4.2" ry="6" transform="rotate(216 14 14)"/>
+          <ellipse cx="14" cy="7.5" rx="4.2" ry="6" transform="rotate(288 14 14)"/>
+        </g>
+        <circle cx="14" cy="14" r="2.8" fill="#FFD36B"/>
+      </svg>
+      <span>Study Timer</span>
+      <span class="tagline">cook up some focus</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" id="tab-timer" aria-controls="panel-timer" aria-selected="true">Timer</button>
+      <button type="button" role="tab" id="tab-dashboard" aria-controls="panel-dashboard" aria-selected="false" tabindex="-1">Dashboard</button>
+    </nav>
+  </header>
+
+  <div id="demoBar" class="demo" hidden>
+    <span>Showing sample data. It isn't saved and doesn't touch your real sessions.</span>
+    <button type="button" class="btn small" id="demoOff">Hide sample data</button>
+  </div>
+
+  <main>
+    <!-- TIMER -->
+    <section id="panel-timer" role="tabpanel" aria-labelledby="tab-timer">
+      <div class="timer-grid">
+        <div class="main-col">
+        <div class="card dial-card">
+          <div class="modes" role="group" aria-label="Session type">
+            <button type="button" class="seg" data-mode="focus" aria-pressed="true">Focus</button>
+            <button type="button" class="seg" data-mode="short" aria-pressed="false">Short break</button>
+            <button type="button" class="seg" data-mode="long" aria-pressed="false">Long break</button>
+          </div>
+          <div class="dial" id="dial" data-mode="focus" data-state="idle" data-mood="idle">
+            <svg id="potSvg" class="scene" viewBox="0 0 360 340" role="img" aria-label="An anime girl peeking over a rice cooker. The cooker's display shows the timer.">
+              <path class="bg-blob" d="M40 214 C22 124 92 38 182 38 C272 38 340 112 320 214 C310 284 250 328 180 328 C102 328 52 284 40 214 Z"/>
+              <g aria-hidden="true">
+                <g transform="translate(60 18)"><ellipse class="petal" rx="6" ry="3.4" style="animation-delay:0s"/></g>
+                <g transform="translate(125 14)"><ellipse class="petal" rx="5" ry="3" style="animation-delay:2.4s"/></g>
+                <g transform="translate(205 18)"><ellipse class="petal" rx="6" ry="3.4" style="animation-delay:4.6s"/></g>
+                <g transform="translate(262 12)"><ellipse class="petal" rx="5" ry="3" style="animation-delay:1.2s"/></g>
+                <g transform="translate(310 30)"><ellipse class="petal" rx="6" ry="3.4" style="animation-delay:3.4s"/></g>
+              </g>
+              <ellipse class="floor" cx="180" cy="326" rx="104" ry="8"/>
+
+              <!-- girl: hair behind -->
+              <g class="hs hs-twin">
+                <path class="hair" d="M122 96 C70 118 54 192 78 262 C98 238 112 196 132 140 Z"/>
+                <path class="hair" d="M238 96 C290 118 306 192 282 262 C262 238 248 196 228 140 Z"/>
+              </g>
+              <path class="hair hs hs-pony" d="M226 70 C290 56 326 130 300 214 C282 170 262 132 232 100 Z"/>
+              <path class="hair hs hs-bob" d="M116 96 C100 140 104 176 126 184 L234 184 C256 176 260 140 244 96 Z"/>
+              <ellipse class="hair" cx="180" cy="106" rx="66" ry="64"/>
+              <g class="hs hs-buns">
+                <circle class="hair" cx="124" cy="56" r="21"/>
+                <circle class="hair" cx="236" cy="56" r="21"/>
+              </g>
+              <g class="ac ac-cat">
+                <path class="hair" d="M126 70 L120 20 L166 48 Z"/>
+                <path class="hair" d="M234 70 L240 20 L194 48 Z"/>
+                <path class="ear-in" d="M130 60 L127 34 L152 49 Z"/>
+                <path class="ear-in" d="M230 60 L233 34 L208 49 Z"/>
+              </g>
+              <path class="ahoge" d="M178 52 C170 30 192 24 200 38"/>
+              <g class="hs hs-twin">
+                <ellipse class="scrunchie" cx="118" cy="110" rx="9" ry="7"/>
+                <ellipse class="scrunchie" cx="242" cy="110" rx="9" ry="7"/>
+              </g>
+              <ellipse class="scrunchie hs hs-pony" cx="229" cy="76" rx="8" ry="10"/>
+              <!-- face -->
+              <ellipse class="skin" cx="180" cy="116" rx="54" ry="50"/>
+              <path class="hair" d="M124 96 C114 126 118 156 130 170 C136 150 138 124 140 104 Z"/>
+              <path class="hair" d="M236 96 C246 126 242 156 230 170 C224 150 222 124 220 104 Z"/>
+              <ellipse class="blush" cx="136" cy="146" rx="9" ry="5"/>
+              <ellipse class="blush" cx="224" cy="146" rx="9" ry="5"/>
+              <path class="nose" d="M178 141 q2 3 4 0"/>
+              <g class="m-open">
+                <ellipse class="sclera" cx="152" cy="126" rx="12" ry="15"/>
+                <ellipse class="iris" cx="152" cy="128" rx="9.6" ry="12.6"/>
+                <ellipse class="iris-lite" cx="152" cy="134" rx="6.4" ry="5.4"/>
+                <ellipse class="pupil" cx="152" cy="128" rx="4.6" ry="7"/>
+                <circle class="shine" cx="148" cy="121" r="3.8"/>
+                <circle class="shine" cx="157" cy="134" r="1.9"/>
+                <path class="lash" d="M138 119 C142 108 162 108 167 118"/>
+                <ellipse class="sclera" cx="208" cy="126" rx="12" ry="15"/>
+                <ellipse class="iris" cx="208" cy="128" rx="9.6" ry="12.6"/>
+                <ellipse class="iris-lite" cx="208" cy="134" rx="6.4" ry="5.4"/>
+                <ellipse class="pupil" cx="208" cy="128" rx="4.6" ry="7"/>
+                <circle class="shine" cx="212" cy="121" r="3.8"/>
+                <circle class="shine" cx="203" cy="134" r="1.9"/>
+                <path class="lash" d="M222 119 C218 108 198 108 193 118"/>
+              </g>
+              <g class="m-happy">
+                <path class="arc" d="M140 129 Q152 115 164 129"/>
+                <path class="arc" d="M196 129 Q208 115 220 129"/>
+              </g>
+              <g class="m-star">
+                <ellipse class="sclera" cx="152" cy="126" rx="12" ry="15"/>
+                <ellipse class="sclera" cx="208" cy="126" rx="12" ry="15"/>
+                <path class="star-eye" d="M152 112 L155.2 122.8 L166 126 L155.2 129.2 L152 140 L148.8 129.2 L138 126 L148.8 122.8 Z"/>
+                <path class="star-eye" d="M208 112 L211.2 122.8 L222 126 L211.2 129.2 L208 140 L204.8 129.2 L194 126 L204.8 122.8 Z"/>
+                <path class="lash" d="M138 119 C142 108 162 108 167 118"/>
+                <path class="lash" d="M222 119 C218 108 198 108 193 118"/>
+              </g>
+              <path class="mouth mo-neutral" d="M173 150 Q180 155 187 150"/>
+              <path class="mouth mo-smile" d="M168 148 Q180 161 192 148"/>
+              <path class="mouth fill mo-open" d="M168 146 Q180 170 192 146 Z"/>
+              <path class="hair" d="M122 106 C112 52 248 52 238 106 L230 82 L218 104 L206 80 L194 104 L180 78 L166 104 L154 80 L142 104 L130 82 Z"/>
+              <path class="hair-hi" d="M142 72 C162 62 198 62 218 72"/>
+              <g class="ac ac-sakura" transform="translate(238 84)">
+                <g class="pin-petal-set">
+                  <ellipse class="pin-petal" cx="0" cy="-7" rx="4.5" ry="7"/>
+                  <ellipse class="pin-petal" cx="0" cy="-7" rx="4.5" ry="7" transform="rotate(72)"/>
+                  <ellipse class="pin-petal" cx="0" cy="-7" rx="4.5" ry="7" transform="rotate(144)"/>
+                  <ellipse class="pin-petal" cx="0" cy="-7" rx="4.5" ry="7" transform="rotate(216)"/>
+                  <ellipse class="pin-petal" cx="0" cy="-7" rx="4.5" ry="7" transform="rotate(288)"/>
+                </g>
+                <circle class="pin-core" r="2.6"/>
+              </g>
+
+              <g class="ac ac-bow" transform="translate(236 86)">
+                <path class="bow" d="M0 0 L-17 -10 L-17 10 Z"/>
+                <path class="bow" d="M0 0 L17 -10 L17 10 Z"/>
+                <circle class="bow" r="4"/>
+              </g>
+              <g class="ac ac-glasses">
+                <circle cx="152" cy="126" r="18"/>
+                <circle cx="208" cy="126" r="18"/>
+                <path d="M170 123 Q180 117 190 123"/>
+              </g>
+
+              <!-- rice cooker -->
+              <rect class="trim" x="84" y="222" width="16" height="40" rx="8"/>
+              <rect class="trim" x="260" y="222" width="16" height="40" rx="8"/>
+              <path class="pot-body" d="M98 204 L262 204 L262 288 C262 308 246 318 226 318 L134 318 C114 318 98 308 98 288 Z"/>
+              <path class="trim" d="M98 286 L262 286 L262 288 C262 308 246 318 226 318 L134 318 C114 318 98 308 98 288 Z"/>
+              <path class="pot-shine" d="M110 222 L110 272"/>
+              <rect class="lcd-bg" x="126" y="216" width="108" height="58" rx="12"/>
+              <text id="potLabel" class="lcd lcd-label" x="180" y="234" text-anchor="middle">COOKING</text>
+              <text id="potTime" class="lcd lcd-time" x="180" y="263" text-anchor="middle">25:00</text>
+              <g aria-hidden="true">
+                <ellipse class="grain" cx="119.5" cy="302" rx="4.2" ry="2.8"/><ellipse class="grain" cx="130.5" cy="302" rx="4.2" ry="2.8"/>
+                <ellipse class="grain" cx="141.5" cy="302" rx="4.2" ry="2.8"/><ellipse class="grain" cx="152.5" cy="302" rx="4.2" ry="2.8"/>
+                <ellipse class="grain" cx="163.5" cy="302" rx="4.2" ry="2.8"/><ellipse class="grain" cx="174.5" cy="302" rx="4.2" ry="2.8"/>
+                <ellipse class="grain" cx="185.5" cy="302" rx="4.2" ry="2.8"/><ellipse class="grain" cx="196.5" cy="302" rx="4.2" ry="2.8"/>
+                <ellipse class="grain" cx="207.5" cy="302" rx="4.2" ry="2.8"/><ellipse class="grain" cx="218.5" cy="302" rx="4.2" ry="2.8"/>
+                <ellipse class="grain" cx="229.5" cy="302" rx="4.2" ry="2.8"/><ellipse class="grain" cx="240.5" cy="302" rx="4.2" ry="2.8"/>
+              </g>
+              <g class="lid">
+                <path class="pot-lid" d="M102 204 C102 148 258 148 258 204 Z"/>
+                <rect class="pot-rim" x="96" y="198" width="168" height="12" rx="6"/>
+                <path class="pot-shine" d="M120 190 C124 174 138 166 154 164"/>
+                <ellipse class="pot-vent" cx="236" cy="173" rx="10" ry="4.6" transform="rotate(22 236 173)"/>
+              </g>
+              <!-- hands on the rim -->
+              <g>
+                <circle class="skin" cx="110" cy="188" r="11"/><circle class="skin" cx="116" cy="178" r="5.5"/>
+                <circle class="skin" cx="250" cy="188" r="11"/><circle class="skin" cx="244" cy="178" r="5.5"/>
+              </g>
+              <g class="steam" aria-hidden="true">
+                <circle class="puff" cx="238" cy="162" r="8"/>
+                <circle class="puff" cx="242" cy="162" r="10"/>
+                <circle class="puff" cx="236" cy="162" r="7"/>
+              </g>
+              <g class="sparkles" aria-hidden="true">
+                <g transform="translate(70 80)"><path class="spark" d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z"/></g>
+                <g transform="translate(296 66)"><path class="spark" d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z" style="animation-delay:.3s"/></g>
+                <g transform="translate(308 158)"><path class="spark" d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z" style="animation-delay:.6s"/></g>
+                <g transform="translate(52 160)"><path class="spark" d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z" style="animation-delay:.15s"/></g>
+              </g>
+              <rect class="girl-hit" x="52" y="18" width="256" height="170"><title>Click her to change her look</title></rect>
+            </svg>
+            <div class="vh" id="dialTime" role="timer">25:00</div>
+            <div class="dial-sub" id="dialSub"></div>
+            <div class="pips" id="pips" aria-hidden="true"></div>
+            <button type="button" class="char-pill" id="charBtn" aria-controls="charCard" aria-expanded="false"><span id="charName">Hana</span><span class="edit">Change look</span></button>
+          </div>
+          <div class="controls">
+            <button type="button" class="btn primary" id="btnMain">Start</button>
+            <button type="button" class="btn" id="btnReset">Reset</button>
+            <button type="button" class="btn" id="btnFinish" hidden>Finish and log</button>
+            <button type="button" class="btn" id="btnSkip" hidden>Skip break</button>
+          </div>
+          <p class="notice" id="notice" role="status" aria-live="polite"></p>
+        </div>
+
+      <div class="card char-card" id="charCard" hidden>
+          <div class="card-head"><h2>Your character</h2><button type="button" class="btn small" id="charDone">Done</button></div>
+          <p class="muted">Design your own study buddy. She is built from the options below, so she is always an original character.</p>
+          <div class="char-fields">
+            <label class="fl" for="charNameInput">Name<input type="text" id="charNameInput" maxlength="16" placeholder="Hana" autocomplete="off"></label>
+            <div class="fl"><span class="lbl" id="lbl-style">Hairstyle</span><div class="seg-group" id="optStyle" role="group" aria-labelledby="lbl-style"></div></div>
+            <div class="fl"><span class="lbl" id="lbl-hair">Hair color</span><div class="swatches" id="optHair" role="group" aria-labelledby="lbl-hair"></div></div>
+            <div class="fl"><span class="lbl" id="lbl-eyes">Eyes</span><div class="swatches" id="optEyes" role="group" aria-labelledby="lbl-eyes"></div></div>
+            <div class="fl"><span class="lbl" id="lbl-skin">Skin</span><div class="swatches" id="optSkin" role="group" aria-labelledby="lbl-skin"></div></div>
+            <div class="fl"><span class="lbl" id="lbl-acc">Accessory</span><div class="seg-group" id="optAcc" role="group" aria-labelledby="lbl-acc"></div></div>
+          </div>
+          <button type="button" class="btn small" id="charReset">Reset to Hana</button>
+        </div>
+
+        <div class="card">
+        <div class="card-head"><h2>Tasks</h2><span class="muted" id="taskCount"></span></div>
+        <p class="muted">The task at the top is your highest priority. Use the arrows to move a task up or down.</p>
+        <form class="task-form" id="taskForm" autocomplete="off">
+          <label class="vh" for="taskInput">New task</label>
+          <input type="text" id="taskInput" maxlength="80" placeholder="Add a task, e.g. Finish problem set 4" required>
+          <label class="vh" for="taskSubject">Subject</label>
+          <select id="taskSubject"></select>
+          <button type="submit" class="btn primary small">Add task</button>
+        </form>
+        <ul class="list" id="taskList"></ul>
+        <details class="done-box" id="doneBox" hidden>
+          <summary id="doneSum"></summary>
+          <ul class="list" id="doneList"></ul>
+          <button type="button" class="btn small" id="clearDone">Clear completed</button>
+        </details>
+      </div>
+        </div>
+
+        <div class="side">
+          <div class="card">
+            <h2>Subject</h2>
+            <div class="chips" id="chips"></div>
+            <form class="inline" id="subjForm" autocomplete="off">
+              <label class="vh" for="subjInput">New subject</label>
+              <input type="text" id="subjInput" maxlength="24" placeholder="Add a subject">
+              <button type="submit" class="btn small">Add</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="sum-line"><h2>Today</h2><span class="num" id="todayTotal"></span></div>
+            <ul class="list" id="todayList"></ul>
+          </div>
+
+          <div class="card" id="planCard" hidden>
+            <h2>Planned for today</h2>
+            <ul class="list" id="planToday"></ul>
+          </div>
+
+          <details class="card settings">
+            <summary>Settings</summary>
+            <div class="fields">
+              <label for="setFocus">Focus (min)<input type="number" id="setFocus" inputmode="numeric" min="1" max="180"></label>
+              <label for="setShort">Short break (min)<input type="number" id="setShort" inputmode="numeric" min="1" max="60"></label>
+              <label for="setLong">Long break (min)<input type="number" id="setLong" inputmode="numeric" min="1" max="90"></label>
+              <label for="setCycles">Sessions before long break<input type="number" id="setCycles" inputmode="numeric" min="2" max="8"></label>
+              <label for="setGoal">Daily goal (min)<input type="number" id="setGoal" inputmode="numeric" min="10" max="720"></label>
+              <span></span>
+              <label class="check" for="setAuto"><input type="checkbox" id="setAuto"> Start the next session automatically</label>
+              <label class="check" for="setSound"><input type="checkbox" id="setSound"> Play a rice cooker jingle when a session ends</label>
+              <button type="button" class="btn small" id="testSound">Play the jingle</button>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+      <div style="display:grid;gap:16px">
+        <div class="stats" id="stats"></div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Study time per day</h2>
+            <div class="seg-group" id="rangeSeg" role="group" aria-label="Date range">
+              <button type="button" class="seg" data-range="7" aria-pressed="false">7 days</button>
+              <button type="button" class="seg" data-range="14" aria-pressed="true">14 days</button>
+              <button type="button" class="seg" data-range="30" aria-pressed="false">30 days</button>
+            </div>
+          </div>
+          <div class="readout" id="readout"></div>
+          <div class="chart" id="chart"></div>
+          <div class="legend" id="legend"></div>
+          <div class="empty" id="emptyNote" hidden>
+            <span>No sessions yet. Finish a focus session and it shows up here.</span>
+            <button type="button" class="btn small" id="demoOn">Preview with sample data</button>
+          </div>
+        </div>
+
+      <div class="cal-layout">
+        <div class="card">
+          <div class="cal-head">
+            <h2 id="calTitle"></h2>
+            <button type="button" class="btn small" id="calToday">Today</button>
+            <button type="button" class="btn small" id="calPrev" aria-label="Previous month">&#8249;</button>
+            <button type="button" class="btn small" id="calNext" aria-label="Next month">&#8250;</button>
+          </div>
+          <p class="cal-sub" id="calSummary"></p>
+          <div class="dow" aria-hidden="true">
+            <span><span class="l">Sun</span><span class="s">S</span></span>
+            <span><span class="l">Mon</span><span class="s">M</span></span>
+            <span><span class="l">Tue</span><span class="s">T</span></span>
+            <span><span class="l">Wed</span><span class="s">W</span></span>
+            <span><span class="l">Thu</span><span class="s">T</span></span>
+            <span><span class="l">Fri</span><span class="s">F</span></span>
+            <span><span class="l">Sat</span><span class="s">S</span></span>
+          </div>
+          <div class="days" id="calDays"></div>
+          <div class="cal-legend">
+            <span>Shade shows time studied against your goal</span>
+            <span class="sw" aria-hidden="true"><i style="--i:0"></i><i style="--i:.25"></i><i style="--i:.5"></i><i style="--i:.75"></i><i style="--i:1"></i></span>
+            <span>Circles are planned sessions; filled means done</span>
+          </div>
+        </div>
+
+        <div class="card day-panel">
+          <div>
+            <h2 id="dpTitle"></h2>
+            <p class="muted" id="dpSub"></p>
+          </div>
+          <div class="sec"><h3>Sessions</h3><ul class="list" id="dpSessions"></ul></div>
+          <div class="sec"><h3>Plans</h3><ul class="list" id="dpPlans"></ul></div>
+          <form class="plan-form" id="planForm" autocomplete="off">
+            <label class="vh" for="planTitle">Plan</label>
+            <input type="text" id="planTitle" class="full" maxlength="80" placeholder="Plan a session, e.g. Chapter 6 problems" required>
+            <label class="vh" for="planSubject">Subject</label>
+            <select id="planSubject"></select>
+            <label class="vh" for="planTime">Time</label>
+            <input type="time" id="planTime">
+            <button type="submit" class="btn primary small">Add plan</button>
+          </form>
+        </div>
+      </div>
+
+        <div class="two">
+          <div class="card">
+            <div class="card-head"><h2>By subject</h2><span class="muted" id="subjRange"></span></div>
+            <div id="subjects"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Recent sessions</h2></div>
+            <ul class="list" id="recent"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot"><span id="sync" role="status">Loading your sessions…</span><span>Made with AI. The code and the artwork are AI-generated.</span></footer>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
